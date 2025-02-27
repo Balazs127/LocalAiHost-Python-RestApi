@@ -56,6 +56,7 @@ openai==1.59.8
 packaging @ file:///C:/b/abs_c3vlh0z4jw/croot/packaging_1720101866539/work
 pandas==2.2.3
 pefile==2023.2.7
+pillow==11.0.0
 platformdirs @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/platformdirs_1701797392447/work
 pluggy @ file:///C:/b/abs_dfec_m79vo/croot/pluggy_1733170145382/work
 prompt_toolkit==3.0.48
@@ -88,7 +89,9 @@ starlette==0.41.3
 sympy==1.13.1
 tiktoken==0.8.0
 tokenizers==0.21.0
-torch==2.6.0
+torch==2.5.1+cu121
+torchaudio==2.5.1+cu121
+torchvision==0.20.1+cu121
 tornado==6.4.2
 tqdm @ file:///C:/b/abs_77wju137gk/croot/tqdm_1724853945787/work
 transformers==4.48.0

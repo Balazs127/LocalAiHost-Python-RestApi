@@ -7,3 +7,6 @@ os.chdir(base_dir)
 
 # Run FastAPI with Uvicorn, ensuring the module is found
 subprocess.run(["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"])
+
+# To rebuild
+# pyinstaller --onefile --console --add-data "main.py;." start_server.py

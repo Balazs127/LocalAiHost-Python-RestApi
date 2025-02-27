@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -13,13 +14,24 @@ app = FastAPI()
 
 
 # ---------------------------
-# Device configuration
+# Device Configuration
 # ---------------------------
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # Use the first GPU (adjust if needed)
+torch.cuda.empty_cache()  # Clear any cached memory
+
+print(torch.cuda.is_available())  # Should print True
+print(torch.version.cuda)  # Should print 12.1
+print(torch.backends.cudnn.version())  # Should print a valid version (e.g., 8908)
+print(torch.cuda.get_device_name(0))  # Should print "RTX 4080 Super"
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")  # Specify GPU 0 explicitly
+
+# Limit GPU memory usage to 50%
+if torch.cuda.is_available():
+    torch.cuda.set_per_process_memory_fraction(0.5, device=0)  # Use device index instead of torch.device
+
 print(f"Using device: {device}")
-
-
 
 # ---------------------------
 # Load the GGUF model
@@ -36,11 +48,9 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map="auto", #if torch.cuda.is_available() else None,
     torch_dtype=torch.float16, #if torch.cuda.is_available() else torch.float32,
     low_cpu_mem_usage=True
-)
-model.to(device)
+).to(device)
+
 print("Model loaded successfully!")
-
-
 
 # ---------------------------
 # Request/Response Schemas
@@ -88,7 +98,7 @@ async def generate(request: GenerateRequest):
             repetition_penalty=1.1,       
             do_sample=True,              
             eos_token_id=tokenizer.eos_token_id,
-            pad_token_id=pad_token_id
+            pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id
         )
         print("Generated output successfully.")
 
